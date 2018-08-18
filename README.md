@@ -66,13 +66,13 @@ and the ID of the latest 'minimal' Amazon Linux 2 AMI in that region
 (AMIs named `amzn2-ami-minimal-hvm-*`). Leave the `aws_profile` line unchanged
 in order to use the IAM profile you've set up earlier on.
 
-```json 
+```json
   "variables": {
     "aws_profile": "{{env `AWS_PROFILE`}}",
     "region": "eu-west-1",
     "ami": "ami-586867b2"
   }
-  ```  
+```  
 
 Edit the dependencies in `packer/files/.packer/project.clj` to
 amend the list of pre-loaded Clojure libraries. 
@@ -87,7 +87,7 @@ In the `terraform/ebs` directory, create a new `terraform.tfvars`
 file from the example file. Edit the variables to match your region 
 and IAM profile for Terraform. 
 
-```hcl-terraform
+```hcl
 region = "eu-west-1"
 availability_zone = "eu-west-1a"
 profile = "terraform"
@@ -104,7 +104,7 @@ file from the example file. Edit the variables to match your region,
 IAM profile for Terraform, key name, instance IAM role, security group and 
 ssh connection parameters. 
 
-```hcl-terraform
+```hcl
 region = "eu-west-1"
 availability_zone = "eu-west-1c"
 profile = "terraform"
@@ -246,7 +246,7 @@ This will be directly executed as `root` by AWS when the instance is created.
 The code below uses `sed` to replace the `#Port 22` line in `/etc/ssh/sshd_config` 
 with a new port, and it then restarts the ssh server:
 
-```hcl-terraform
+```hcl
 user_data = "#!/bin/bash\nsed -i 's/#Port 22/Port ${var.ssh_port}/g' /etc/ssh/sshd_config && service sshd restart"
 ```
 
@@ -260,7 +260,7 @@ resource called `aws_volume_attachment`. It's pretty straightforward: you specif
 an `aws_instance` and an `aws_ebs_volume`, and you then specify their attachment 
 with `aws_volume_attachment`. 
 
-```hcl-terraform
+```hcl
 resource "aws_volume_attachment" "clojure" {
   device_name = "/dev/sdd"
   volume_id = "${data.aws_ebs_volume.clojure.id}"
@@ -285,7 +285,7 @@ makes this easy, by providing the hostname of the instance via
 `"${aws_instance.my-instance.public_dns}"`. Below the code of the 
 `aws_volume_attachment` in `terraform/ec2/main.tf`:
 
-```hcl-terraform
+```hcl
 resource "aws_volume_attachment" "clojure" {
   device_name = "/dev/sdd"
   volume_id = "${data.aws_ebs_volume.clojure.id}"
