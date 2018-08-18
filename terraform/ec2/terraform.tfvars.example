@@ -1,0 +1,8 @@
+region = "eu-west-1"
+availability_zone = "eu-west-1c"
+profile = "terraform"
+ec2_iam_role = "my-iam-role"
+ec2_key_name = "my-ec2-key"
+ssh_private_key_path = "/my-private-keys/my-ec2-key.pem"
+ec2_security_groups = ["my-security-group"]
+ssh_port = "12345"

@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# Install Java, Leiningen and download Clojure libraries
+sudo yum install -y java-1.8.0-openjdk-devel.x86_64
+mkdir -p /home/ec2-user/bin
+curl https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein -o ~/bin/lein
+chmod 755 ~/bin/lein
+cd ~/.packer
+~/bin/lein deps
+cd ~
+rmdir .packer
+
+# Install Python3, Jupyter and BeakerX
+sudo yum install -y python3
+pip3 install --upgrade --user pip
+PATH=$PATH:/home/ec2-user/.local/bin
+pip install --user jupyter jupyterlab requests beakerx
+sudo mkdir -p /usr/share/jupyter /usr/etc/jupyter /usr/etc/ipython
+sudo chown ec2-user /usr/share/jupyter /usr/etc/jupyter /usr/etc/ipython
+beakerx install

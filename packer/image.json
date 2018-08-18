@@ -1,0 +1,37 @@
+{
+  "variables": {
+    "aws_profile": "{{env `AWS_PROFILE`}}",
+    "region": "eu-west-1",
+    "ami": "ami-586867b2"
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "profile": "{{user `aws_profile`}}",
+      "region": "{{user `region`}}",
+      "source_ami": "{{user `ami`}}",
+      "instance_type": "t2.micro",
+      "ssh_username": "ec2-user",
+      "ami_name": "clojure-repl-and-beakerx-{{isotime \"20060102-1504\"}}",
+      "launch_block_device_mappings": [
+        {
+          "device_name": "/dev/xvda",
+          "volume_size": 8,
+          "volume_type": "standard",
+          "delete_on_termination": true
+        }
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "files/",
+      "destination": "/home/ec2-user/"
+    },
+    {
+      "type": "shell",
+      "script": "provision"
+    }
+  ]
+}

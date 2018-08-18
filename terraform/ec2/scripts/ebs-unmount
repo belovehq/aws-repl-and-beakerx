@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+if [[ $(findmnt -M "/data") ]]
+then
+    echo "Unmounting /dev/sdd and removing /data"
+    sudo fuser -mk /dev/sdd
+    sleep 5
+    sudo umount /data
+    sudo rmdir /data
+fi

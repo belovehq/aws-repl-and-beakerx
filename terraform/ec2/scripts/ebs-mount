@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+if [[ ! $(findmnt -M "/data") ]]
+then
+    sudo mkdir -p /data
+    while [ ! -e '/dev/sdd' ]
+    do
+         echo "Waiting for /dev/sdd"
+         sleep 5
+    done
+    if [[ $(lsblk -no FSTYPE /dev/sdd) = "xfs" ]]
+    then
+        echo "mounting /dev/sdd on /data"
+        sudo mount /dev/sdd /data
+    else
+        echo "building /dev/sdd and mounting on /data"
+        sudo mkfs -t xfs /dev/sdd
+        sudo mount /dev/sdd /data
+    fi
+    sudo chown ec2-user /data
+else
+    echo "/dev/sdd is already mounted on /data"
+fi
