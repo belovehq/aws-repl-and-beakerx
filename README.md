@@ -180,10 +180,11 @@ burn it into the AMI with Packer via `packer/files/.packer/project.clj`.
  
 ## Redeploying the configuration 
 
-A few tasks will take place regularly after the initial deployment, such as destroying and recreating 
-the instance, rolling out a new AMI, or destroying and recreating the whole stack.
+There are a few tasks that you'll want to execute after the initial deployment, 
+such as destroying and recreating the instance, increasing the size of the EBS volume,
+rolling out a new AMI, or destroying and recreating the whole stack.
 
-In Terraform's immutable logic, we destroy and recreate 
+In Terraform's (mostly) immutable logic, we destroy and recreate 
 resources rather than amending/mutating them. To do this painlessly, this project follows 
 [Terraform's guidelines](https://www.terraform.io/docs/commands/plan.html#resource-targeting)
 about breaking an overall configuration into several smaller configurations, and using 
@@ -196,8 +197,9 @@ and the EBS volume created by the `terraform/ebs` configuration.
 ### Recreating the EC2 instance 
 
 In the `terraform/ec2` directory,  run `terraform destroy`. Amend
-the Terraform configuration file if needed. Later, recreate the instance with 
-`terraform apply`. This will create a new EC2 instance and attach it to the 
+the Terraform configuration file if there's any change you want to make. 
+Later, recreate the instance with `terraform apply`. 
+The new instance will be attached to the 
 same EBS volume as before, which remains intact.
 
 Destroying and recreating the EC2 instance is preferred to stopping and restarting it. 
@@ -208,11 +210,23 @@ to make successive and possibly undocumented amendment to the instance;
 wiping the slate clean every time forces us to code changes 'at the source' in the AMI.
   
 
+### Increasing the size of the EBS volume
+
+This is an amendment that doesn't require destruction of the existing volume.
+However, you'll have to detach the volume first, which you can do by destroying
+the instance first. 
+Edit `terraform/ebs/main.tf` with then new size and run `terraform apply`, after which
+you can recreate the instance.
+
+You can also change the disk type and IOPS, 
+[subject to some limitations](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/limitations.html).
+In doubt whether a change requires destruction of a resource or not, run `terraform plan`.
+
 ### Rolling out a new machine image
 
 Amend the Packer template and its associated files and scripts. 
 Run `packer build image.json` to create the new AMI on AWS.
-Destroy and recreate the EC2 instance like above; 
+Destroy and recreate instance; 
 the Terraform configuration will automatically select
 the latest version of the AMI.
 
@@ -232,7 +246,7 @@ in `terraform/ec2`.
 
 ## Terraform notes 
 
-Since the machine's is provisioned at AMI level by Packer, 
+Since the machine is provisioned at AMI level by Packer, 
 our Terraform configuration is generic and directly
 reusable for other projects. 
 

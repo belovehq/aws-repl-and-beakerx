@@ -25,8 +25,8 @@ provider "aws" {
 
 
 resource "aws_ebs_volume" "clojure-repl-beakerx" {
-  type = "standard"
-  size = 500
+  type = "gp2"
+  size = 1
   tags {
     Name = "clojure-repl-beakerx"
   }
