@@ -85,6 +85,7 @@ resource "aws_instance" "clojure" {
   }
   root_block_device {
     volume_size = 8
+    volume_type = "gp2"
   }
   availability_zone = "${var.availability_zone}"
   ami = "${data.aws_ami.clojure-repl-beakerx.id}"
