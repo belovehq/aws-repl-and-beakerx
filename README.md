@@ -35,19 +35,16 @@ and [Terraform](https://www.terraform.io/downloads.html) on your local machine.
 2. If you don't already have one, set up an 
    [AWS account](https://aws.amazon.com/free).
     
-3. Create IAM Profile(s) to allow Packer and Terraform to manage resources. 
-   Register this/these profiles in your local `~/.aws/credentials` file, 
-    and set the environment variable `AWS_INSTANCE` to the name of the profile 
-    that Packer should use. Examples of (broad) permissions are:
-   
-   * Packer:  `AmazonEC2ContainerRegistryFullAccess`
-    
-   * Terraform: `AmazonEC2FullAccess` + an inline policy with the `IAMPassRole`.   
+3. Create an IAM Profile (e.g. `terraform`) to allow Packer and Terraform 
+   to manage resources. For simplicity, give it `AmazonEC2FullAccess` permissions 
+   and and an `IAMPassRole` inline policy (see Packer's and Terraform's
+   online doc to narrow the permissions to what is strictly necessary). 
+   Register this profile in your local `~/.aws/credentials` file.    
   
 4. Still in IAM, create an IAM role for the instance, with access to the AWS
    services that you'll wish to access via the instance.
    
-5. In EC2, create the following resources so that Terraform  can ssh 
+5. In EC2, create the following resources so that Terraform can ssh 
    onto the instance: 
    
    * A key pair, which the ssh server on the instance will use to 
@@ -61,16 +58,16 @@ and [Terraform](https://www.terraform.io/downloads.html) on your local machine.
 
 ### Step 1: Burning the AMI with Packer
 
-Edit the variables in `packer/images.json` to match your AWS region
-and the ID of the latest 'minimal' Amazon Linux 2 AMI in that region 
-(AMIs named `amzn2-ami-minimal-hvm-*`). Leave the `aws_profile` line unchanged
-in order to use the IAM profile you've set up earlier on.
+Edit the variables in `packer/images.json` to match the IAM profile
+that you've set up earlier on, the AWS region
+and the ID of the latest Amazon Linux 2 AMI (for SSD/gp2 EBS volume) 
+in that region.
 
 ```json
-  "variables": {
-    "aws_profile": "{{env `AWS_PROFILE`}}",
+"variables": {
+    "profile": "terraform",
     "region": "eu-west-1",
-    "ami": "ami-586867b2"
+    "ami": "ami-0bdb1d6c15a40392c"
   }
 ```  
 

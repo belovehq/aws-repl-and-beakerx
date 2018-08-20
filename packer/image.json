@@ -1,13 +1,13 @@
 {
   "variables": {
-    "aws_profile": "{{env `AWS_PROFILE`}}",
+    "profile": "terraform",
     "region": "eu-west-1",
-    "ami": "ami-586867b2"
+    "ami": "ami-0bdb1d6c15a40392c"
   },
   "builders": [
     {
       "type": "amazon-ebs",
-      "profile": "{{user `aws_profile`}}",
+      "profile": "{{user `profile`}}",
       "region": "{{user `region`}}",
       "source_ami": "{{user `ami`}}",
       "instance_type": "t2.micro",
@@ -17,7 +17,7 @@
         {
           "device_name": "/dev/xvda",
           "volume_size": 8,
-          "volume_type": "standard",
+          "volume_type": "gp2",
           "delete_on_termination": true
         }
       ]
